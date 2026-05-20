@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Core // Tic-Tac-Toe</title>
+    <style>
+        /* Global Layout */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            background: rgba(0, 10, 0, 0.9);
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.2);
+            padding: 30px;
+            border-radius: 4px;
+            text-align: center;
+            width: 320px;
+        }
+
+        h2 { margin-top: 0; text-shadow: 0 0 8px #00ff00; letter-spacing: 2px; }
+
+        .mode-select { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+
+        .mode-btn {
+            background: rgba(0, 5, 0, 0.6);
+            border: 1px solid #004400;
+            color: #008800;
+            font-family: 'Courier New', monospace;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .mode-btn.active {
+            background: rgba(0, 40, 0, 0.8);
+            color: #00ff00;
+            border-color: #00ff00;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+        }
+
+        .status-display { color: #88ff88; margin-bottom: 20px; font-size: 1.1rem; height: 24px; }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+            height: 300px;
+        }
+
+        .cell {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid #005500;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .cell:hover { background: rgba(0, 255, 0, 0.1); border-color: #00ff00; }
+
+        .terminal-btn {
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .terminal-btn:hover { background: #00ff00; color: #000; }
+
+        /* Popup Box Layout Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 8, 0, 0.95);
+            display: none; /* Controlled by JavaScript */
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-content {
+            background: #000a00;
+            border: 2px solid #00ff00;
+            padding: 30px;
+            max-width: 400px;
+            width: 85%;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+        }
+
+        .choice-btn {
+            background: rgba(0, 15, 0, 0.6);
+            border: 1px solid #006600;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 12px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .choice-btn:hover { background: rgba(0, 255, 0, 0.1); border-color: #00ff00; }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrixCanvas" class="matrix-bg"></canvas>
+
+    <!-- 1. MAIN BOARD INTERFACE -->
+    <div class="game-container">
+        <h2>// GRID_CORE</h2>
+        <div class="mode-select">
+            <button id="pvpBtn" class="mode-btn active">VS_HUMAN</button>
+            <button id="aiBtn" class="mode-btn">VS_AI_CORE</button>
+        </div>
+        <div class="status-display" id="status">PLAYER X TURN</div>
+        <div class="grid">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <button id="resetBtn" class="terminal-btn">RESET_GRID</button>
+    </div>
+
+    <!-- 2. POPUP SECURITY PANEL -->
+    <div id="questionModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: #ff3333; margin-top:0;">[SECURITY_OVERRIDE]</h3>
+            <p id="modalQuestionText">Verification string needed...</p>
+            <div id="modalChoices"></div>
+            <p id="modalFeedback" style="font-weight:bold; margin-top:15px; height:20px;"></p>
+        </div>
+    </div>
+
+    <!-- 3. ANIMATION CODE FILE -->
+    <script src="matrix.js"></script>
+
+    <!-- 4. TIC TAC TOE LOGIC ENGINE -->
+    <script>
+        let gameGrid = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let gameActive = true;
+        let gameMode = "PvP";
+
+        let selectedCellIndex = null;
+        let selectedCellElement = null;
+
+        const questionDatabase = [
+            {q: "How much E-Waste is discarded annually?", choices: ["25 Million Tons", "50 Million Tons", "75 Million Tons", "100 Million Tons"], a: 1 },
+            { q: "What is NOT an example of responsible ownership?", choices: ["Buying 2nd-hand", "Donating Old Devices", "Using Embedded Batteries", "Keeping Devices for longer"], a: 2 },
+            { q: "What type of file is a 'cookie'?", choices: ["mp4", "mp3", "jpg", "txt"], a: 3 },
+            { q: "What type of AI learns by looking for patterns and rules in data?", choices: ["Chatbot", "Machine Learning", "Computer Vision", "Deep Learning"], a: 1 },
+            { q: "Who is NOT responsible when an AI system goes wrong?", choices: ["Creator", "Data Supplier", "Researcher", "User"], a: 2 },
+            {q: "What is 'Narrow AI'?", choices: ["Designed for single task", "Takes little storage", "Fast problem-solving"], a: 0}
+        ];
+
+        // Cache Elements safely after the HTML loads completely
+        const statusDisplay = document.getElementById("status");
+        const modal = document.getElementById("questionModal");
+        const modalQText = document.getElementById("modalQuestionText");
+        const modalChoices = document.getElementById("modalChoices");
+        const modalFeedback = document.getElementById("modalFeedback");
+
+        function handleCellClick(event) {
+            const clickedCell = event.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute("data-index"));
+
+            if (gameGrid[clickedCellIndex] !== "" || !gameActive || (gameMode === "AI" && currentPlayer === "O")) {
+                return;
+            }
+
+            selectedCellIndex = clickedCellIndex;
+            selectedCellElement = clickedCell;
+
+            launchQuestionGate();
+        }
+
+        function launchQuestionGate() {
+            modalChoices.innerHTML = "";
+            modalFeedback.innerText = "";
+
+            const randomQuestion = questionDatabase[Math.floor(Math.random() * questionDatabase.length)];
+            modalQText.innerText = randomQuestion.q;
+
+            randomQuestion.choices.forEach((choice, index) => {
+                const btn = document.createElement("button");
+                btn.className = "choice-btn";
+                btn.innerText = `> ${choice}`;
+                btn.onclick = () => verifyAnswer(index, randomQuestion.a);
+                modalChoices.appendChild(btn);
+            });
+
+            modal.style.display = "flex"; // Shows popup element
+        }
+
+        function verifyAnswer(selectedIndex, correctIndex) {
+            const buttons = modalChoices.querySelectorAll(".choice-btn");
+            buttons.forEach(b => b.disabled = true);
+
+            if (selectedIndex === correctIndex) {
+                modalFeedback.innerText = "ACCESS GRANTED.";
+                modalFeedback.style.color = "#00ff00";
+                setTimeout(() => {
+                    modal.style.display = "none";
+                    executeMove(selectedCellIndex, selectedCellElement);
+                }, 800);
+            } else {
+                modalFeedback.innerText = "ACCESS DENIED!";
+                modalFeedback.style.color = "#ff3333";
+                setTimeout(() => {
+                    modal.style.display = "none";
+                    switchPlayerTurn();
+                }, 1000);
+            }
+        }
+
+        function executeMove(index, element) {
+            gameGrid[index] = currentPlayer;
+            if (element) {
+                element.innerText = currentPlayer;
+                element.style.color = currentPlayer === "X" ? "#00ff00" : "#ff3333";
+            }
+            
+            if (checkWinConditions()) {
+                statusDisplay.innerText = `PLAYER ${currentPlayer} WINS!`;
+                statusDisplay.style.color = currentPlayer === "X" ? "#00ff00" : "#ff3333";
+                gameActive = false;
+                return;
+            }
+
+            if (!gameGrid.includes("")) {
+                statusDisplay.innerText = "DRAW MATRIX ENCOUNTERED";
+                gameActive = false;
+                return;
+            }
+
+            switchPlayerTurn();
+        }
+
+        function switchPlayerTurn() {
+            if (!gameActive) return;
+            
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusDisplay.innerText = `PLAYER ${currentPlayer} TURN`;
+            statusDisplay.style.color = currentPlayer === "X" ? "#88ff88" : "#ff6666";
+
+            if (gameMode === "AI" && currentPlayer === "O") {
+                statusDisplay.innerText = "AI CORE THINKING...";
+                setTimeout(executeAIMove, 600);
+            }
+        }
+
+        function executeAIMove() {
+            if (!gameActive) return;
+
+            let emptyIndices = [];
+            for (let i = 0; i < gameGrid.length; i++) {
+                if (gameGrid[i] === "") emptyIndices.push(i);
+            }
+
+            if (emptyIndices.length === 0) return;
+
+            const randomIndex = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+            const targetCell = document.querySelector(`[data-index="${randomIndex}"]`);
+
+            executeMove(randomIndex, targetCell);
+        }
+
+        function checkWinConditions() {
+            const conditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (let variant of conditions) {
+                let a = gameGrid[variant[0]];
+                let b = gameGrid[variant[1]];
+                let c = gameGrid[variant[2]];
+                if (a !== "" && a === b && b === c) return true;
+            }
+            return false;
+        }
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            document.getElementById("pvpBtn").classList.toggle("active", mode === "PvP");
+            document.getElementById("aiBtn").classList.toggle("active", mode === "AI");
+            resetEntireBoard();
+        }
+
+        function resetEntireBoard() {
+            gameGrid = ["", "", "", "", "", "", "", "", ""];
+            currentPlayer = "X";
+            gameActive = true;
+            statusDisplay.innerText = "PLAYER X TURN";
+            statusDisplay.style.color = "#88ff88";
+            document.querySelectorAll(".cell").forEach(cell => cell.innerText = "");
+        }
+
+        // Attach Initial Actions Explicitly
+        document.querySelectorAll(".cell").forEach(cell => cell.addEventListener("click", handleCellClick));
+        document.getElementById("pvpBtn").onclick = () => setGameMode("PvP");
+        document.getElementById("aiBtn").onclick = () => setGameMode("AI");
+        document.getElementById("resetBtn").onclick = () => resetEntireBoard();
+    </script>
+</body>
+</html>

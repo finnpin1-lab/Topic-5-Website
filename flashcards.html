@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revision</title>
+    <link rel="stylesheet" href="flashacard_style.css">
+</head>
+<body>
+
+    <!-- Wallpaper Canvas Layer -->
+    <canvas id="matrixCanvas" class="matrix-bg"></canvas>
+
+    <!-- Interactive Workspace Interface -->
+    <div class="content-container">
+        <div class="revision-box">
+            <h2 class="terminal-header">// SYSTEM_REVISION_MODULE</h2>
+            <p class="terminal-subheader">Download database segments to prepare for your quiz evaluation.</p>
+            
+            <!-- Filter Hub Controls -->
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="openTopic(event, 'topic1')">Protection</button>
+                <button class="tab-btn" onclick="openTopic(event, 'topic2')">Environmental</button>
+                <button class="tab-btn" onclick="openTopic(event, 'topic3')">AI</button>
+            </div>
+
+            <!-- Segment Content Streams -->
+            <div id="topic1" class="tab-content data-stream" style="display: block;">
+                <h3>[LOG_01: PROTECTION]</h3>
+                <p>There are many methods of protecting a network. Examples: Access Control, Physical Security, Firewalls</p>
+                <pre><code>
+ACCESS CONTROL: 
+
+            -Limits who can access
+
+            -Users may only view certain files
+
+            -Users can be given 'Read-Only Access'
+
+            -Users can be given right to delete files
+
+PHYSICAL SECURITY:
+
+            -Access doors should be kept locked with keypads or other methods
+
+            -Swipe cards can be used for identification
+
+            -RFID chips can be fitted to sound an alarm if removed
+
+FIREWALL:
+            -Protects a network connected to a WAN
+
+            -Can be provided by hardware or software
+
+            -Can be configured to prevent communications in and out
+
+                </code></pre>
+                <div class="cheat-sheet-tip">💡 <strong>Data Tip:</strong> Individual computers are likely to have software-based firewalls, whereas a large business is more likely to have a hardware-based one.</div>
+            </div>
+
+            <div id="topic2" class="tab-content data-stream">
+                <h3>[LOG_02: ENVIRONMENTAL EFFECTS]</h3>
+                <p>The advancing of technology has had many adverse effects on the environment caused by Manufacturing and Disposal</p>
+                <pre><code>
+Manufacturing:
+
+                -Large quantities of rare materials used
+
+                -Non-renewable materials used. e.g. Palladium and Copper
+
+                -Toxic Materials used. e.g. Arsenic.
+
+                -mining for raw materials scars landscape
+
+                -Much of the energy used comes from fossil fuels#
+
+Disposal:
+                -50 million tons of E-Waste produced annually
+
+                -only abound 20% of e-waste is recycled
+
+                -E-waste can be dumped in landfill sites where toxic materials leak into environment
+
+Energy Use:
+                
+                -Approximately 70% of energy is used in Manufacturing
+
+                -Approximately 30% is used in device use
+
+</code></pre>
+                <div class="cheat-sheet-tip">💡 <strong>Data Tip:</strong> Responsible recycling can address many of the problems with e-waste. e.g: reduces potential for chemical leakage, enables the recovery of valuable materials and reduces the number harmful toxins released into the air.</div>
+            </div>
+
+            <div id="topic3" class="tab-content data-stream">
+                <h3>[LOG_03: AI]</h3>
+                <p>AI has been a hot topic in recent years with it's development. There are many different types of AI.</p>
+                <pre><code>
+Types:
+                -Machine Learning: Learns by looking for rules and patterns in data. They get progressively better over time.
+                    
+                -Narrow AI: Designed with a specific task in mind. Narrow AI is programmed to do one thing and cannot transfer that knowledge to different tasks.
+
+Problems:
+                -Algorithmic Bias: Can happen due to biased datasets, design flaws in the code - causing exaggeration
+
+                -Responsibility: It can be hard to know who to blame if something goes wrong. Anybody - from the user, to the original creator, to the one who supplied the datasets can be blamed for problems.
+                </code></pre>
+                <div class="cheat-sheet-tip">💡 <strong>Data Tip:</strong> There are many types of narrow AI - for example, email spam filters; social media monitoring tools; fingerprint recognition; content reccomendation and autonomous weapon systems.</div>
+            </div>
+        </div>
+
+        <!-- Navigation Exit Portal -->
+        <a href="tictactoe.html" class="portal-link">Proceed to Quiz Game Module &rarr;</a>
+    </div>
+
+    <!-- Interface Script Engines -->
+    <script src="flashcard_script.js"></script>
+    <script>
+        // Tab Navigation Toggle Controller
+        function openTopic(evt, topicName) {
+            const tabContent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+            }
+
+            const tabButtons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+            }
+
+            document.getElementById(topicName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>

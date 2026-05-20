@@ -1,0 +1,37 @@
+/* This targets the entire page */
+body {
+    margin: 0;
+    padding: 0;
+    /* Creates a beautiful arcade-style twilight sky */
+    background: linear-gradient(to bottom, #1a052e, #3a1c5d, #6b3074);
+    background-attachment: fixed;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+/* This targets your main heading */
+h1 {
+    color: yellowgreen;
+    border-bottom: 2px solid #38bf5a;
+}
+h3 {
+    color: yellowgreen;
+    border-bottom: 2px solid #38bf5a;
+}
+.btn {
+    font-family: 'Times New Roman', Times, serif;
+    padding: 15px 30px;
+    font-size: 32px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer; /* Makes the mouse turn into a hand */
+    transition: background 0.3s ease; /* Smooth color change */
+    margin-top: 25px;
+    margin-left: 75px;
+}
+.btn:hover {
+    background-color: #ffffff;
+    color: #000000
+}
